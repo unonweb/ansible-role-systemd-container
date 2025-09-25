@@ -1,0 +1,15 @@
+[Exec]
+Boot=true 
+PrivateUsers=pick 
+Hostname=payloadcms-debian
+# required for mysql:
+Capability=CAP_NET_BIND_SERVICE
+Timezone=copy
+
+[Files]
+PrivateUsersOwnership=auto
+
+[Network]
+Private=true 
+VirtualEthernet=true 
+Bridge=br0

@@ -1,0 +1,15 @@
+[Exec]
+Boot=true
+PrivateUsers=pick
+Hostname=nextcloud-debian
+#Capability=CAP_NET_BIND_SERVICE
+Timezone=copy
+
+[Files]
+PrivateUsersOwnership=auto
+
+[Network]
+Private=false
+VirtualEthernet=true
+Bridge=br0
+#Port=2010:80
