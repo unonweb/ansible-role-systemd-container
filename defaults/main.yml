@@ -1,0 +1,7 @@
+---
+systemd_container:
+  apt:
+    state:
+  files:
+    cp: [] # /etc/systemd/nspawn/
+    rm: []
