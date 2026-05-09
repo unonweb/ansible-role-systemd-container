@@ -19,14 +19,14 @@
       state: directory
       owner: root
       group: root
-      mode: o=rwx,g=rx,o=rx
+      mode: u=rwx,g=rx,o=rx
 
   # mkdir /var/lib/machines
   - name: Mkdir /var/lib/machines (set correct perms)
     become: true
     ansible.builtin.file:
       path: /var/lib/machines
-      mode: o=rwx,g=,o=
+      mode: u=rwx,g=,o=
 
   # systemd-machined.service
   - name: Start & enable systemd-machined.service
