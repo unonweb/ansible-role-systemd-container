@@ -1,0 +1,13 @@
+---   
+# copy
+- when: systemd_container_nspawn_config_copy | length > 0
+  name: Copy {{ systemd_container_nspawn_config_copy }} to /etc/systemd/nspawn
+  become: true
+  notify: networkctl reload
+  loop: "{{ systemd_container_nspawn_config_copy }}"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/nspawn/{{ item }}"
+    owner: root
+    group: root
+    mode: u=rw,g=,o=

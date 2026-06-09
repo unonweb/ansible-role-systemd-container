@@ -1,0 +1,37 @@
+---
+# mkdir
+- name: Mkdir /etc/systemd/nspawn
+  ansible.builtin.file:
+    path: /etc/systemd/nspawn
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+    
+# sync
+- when: systemd_container_nspawn_config_sync != None
+  block:
+
+  # mkdir
+  - name: Mkdir {{ systemd_container_nspawn_config_sync_tmp }}
+    ansible.builtin.file:
+      path: "{{ systemd_container_nspawn_config_sync_tmp }}"
+      mode: u=rwx,g=,o=
+      state: directory
+
+  # sync to tmp
+  - name: Sync {{ systemd_container_nspawn_config_sync }} to {{ systemd_container_nspawn_config_sync_tmp }}
+    become: false
+    delegate_to: localhost
+    ansible.builtin.command:
+      cmd: rsync --recursive --checksum --delete --itemize-changes --chmod=u=rw,g=,o= -e ssh {{ role_path }}/files/{{ systemd_container_nspawn_config_sync }}/ ansible@{{ inventory_hostname }}:{{ systemd_container_nspawn_config_sync_tmp }}
+    register: __systemd_container_rsync_tmp
+    changed_when: __systemd_container_rsync_tmp.stdout_lines | length > 0
+
+  # sync to dst
+  - name: Sync {{ systemd_container_nspawn_config_sync_tmp }}/ to /etc/systemd/nspawn
+    become: true
+    ansible.builtin.command:
+      cmd: rsync --recursive --checksum --delete --itemize-changes --chmod=u=rw,g=,o=  {{ systemd_container_nspawn_config_sync_tmp }}/ /etc/systemd/nspawn
+    register: __systemd_container_sync_final
+    changed_when: __systemd_container_sync_final.stdout_lines | length > 0

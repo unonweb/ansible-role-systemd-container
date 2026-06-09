@@ -1,7 +1,16 @@
 ---
-systemd_container:
-  apt:
-    state:
-  files:
-    cp: [] # /etc/systemd/nspawn/
-    rm: []
+# config
+systemd_container_nspawn_config_reset: false
+systemd_container_nspawn_config_sync: []
+systemd_container_nspawn_config_sync_tmp: "/home/ansible/tmp/systemd_container/{{ systemd_container_nspawn_config_sync }}"
+systemd_container_nspawn_config_copy: []
+systemd_container_nspawn_config_template: []
+# systemd
+systemd_container_systemd_enable:
+- systemd-machined.service
+systemd_container_systemd_disable: []
+systemd_container_systemd_start:
+- systemd-machined.service
+systemd_container_systemd_stop: []
+systemd_container_systemd_overrides: []
+systemd_container_systemd_reset: []

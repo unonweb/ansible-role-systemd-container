@@ -1,0 +1,77 @@
+---
+# reset
+- when: systemd_container_systemd_reset | length > 0
+  name: Reset systemd system unit overrides {{ systemd_container_systemd_reset }}
+  loop: "{{ systemd_container_systemd_reset }}"
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item }}.d"
+    state: absent
+
+# overrides
+- when: systemd_container_systemd_overrides | length > 0
+  block:
+
+  # mkdir overrides
+  - name: Mkdir in /etc/systemd/system/...
+    become: true
+    loop: "{{ systemd_container_systemd_overrides }}"
+    ansible.builtin.file:
+      path: "/etc/systemd/system/{{ item | dirname }}"
+      state: directory
+      owner: root
+      group: root
+      mode: u=rwx,g=rx,o=rx
+
+  # cp overrides
+  - name: Copy systemd system unit overrides {{ systemd_container_systemd_overrides }}
+    become: true
+    notify: systemctl --system daemon-reload
+    loop: "{{ systemd_container_systemd_overrides }}"
+    ansible.builtin.copy:
+      src: "{{ role_path }}/files/{{ item }}"
+      dest: "/etc/systemd/system/{{ item }}"
+      force: true
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+# enable
+- when: systemd_container_systemd_enable | length > 0
+  name: systemctl --system enable {{ systemd_container_systemd_enable }}
+  become: true
+  loop: "{{ systemd_container_systemd_enable }}"
+  ansible.builtin.systemd_service:
+    scope: system
+    name: "{{ item }}"
+    enabled: true
+
+# disable
+- when: systemd_container_systemd_disable | length > 0
+  name: systemctl --system disable {{ systemd_container_systemd_disable }}
+  become: true
+  loop: "{{ systemd_container_systemd_disable }}"
+  ansible.builtin.systemd_service:
+    scope: system
+    name: "{{ item }}"
+    enabled: false
+
+# start
+- when: systemd_container_systemd_start | length > 0
+  name: systemctl --system start {{ systemd_container_systemd_start }}
+  become: true
+  loop: "{{ systemd_container_systemd_start }}"
+  ansible.builtin.systemd_service:
+    scope: system
+    name: "{{ item }}"
+    state: started
+
+# stop
+- when: systemd_container_systemd_stop | length > 0
+  name: systemctl --system stop {{ systemd_container_systemd_stop }}
+  become: true
+  loop: "{{ systemd_container_systemd_stop }}"
+  ansible.builtin.systemd_service:
+    scope: system
+    name: "{{ item }}"
+    state: stopped

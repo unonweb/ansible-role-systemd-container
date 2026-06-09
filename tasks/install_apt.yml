@@ -1,0 +1,7 @@
+---
+# apt
+- name: Apt {{ systemd_container_apt_state }} systemd-container
+  become: true
+  ansible.builtin.apt:
+    state: "{{ systemd_container_apt_state }}"
+    name: systemd-container
