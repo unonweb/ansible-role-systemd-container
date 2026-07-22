@@ -1,3 +1,9 @@
+ABOUT
+=====
+
+Radically simple Ansible role to create systemd-nspawn config files and overrides for the corresponding service unit.
+
+
 NOTES
 =====
 
@@ -10,6 +16,7 @@ The package **systemd-container** contains:
 
 These are the corresponding manpages:
 - https://manpages.debian.org/trixie/systemd-container/index.html
+
 
 USAGE
 =====
@@ -31,8 +38,9 @@ USAGE
 			NoNewPrivileges: true
 		Files:
 			PrivateUsersOwnership: auto
-			Bind: /srv/data/nextcloud-db/cloud:/var/www/nextcloud/data
-			Bind: /srv/data/nextcloud-db/mysql:/var/lib/mysql
+			Bind:
+			- /srv/data/nextcloud-db/cloud:/var/www/nextcloud/data
+			- /srv/data/nextcloud-db/mysql:/var/lib/mysql
 		Network:
 			Private: true
 			VirtualEthernet: true
