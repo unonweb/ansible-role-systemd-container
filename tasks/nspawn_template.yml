@@ -9,5 +9,5 @@
     loop: "{{ systemd_container_nspawn_config_template }}"
     ansible.builtin.template:
       src: "{{ item }}"
-      dest: "/etc/systemd/nspawn/{{ item.split('/')[1].replace('.j2', '') }}" # # ziska/wg-alfdorf.netdev.j2 --> wg-alfdorf.netdev.j2 --> wg-alfdorf.netdev
+      dest: "/etc/systemd/nspawn/{{ item.split('/')[1].replace('.j2', '') }}" # ziska/wg-alfdorf.netdev.j2 --> wg-alfdorf.netdev.j2 --> wg-alfdorf.netdev
       mode: u=rw,g=,o=
