@@ -31,7 +31,7 @@
   become: true
   ansible.builtin.template:
     src: service_overrides.conf.j2
-    dest: "/etc/systemd/system/systemd-nspawn@{{ item.name }}.service.d/ansible_override.conf"
+    dest: "/etc/systemd/system/systemd-nspawn@{{ item.name }}.service.d/ansible_overrides.conf"
     owner: root
     group: root
     mode: 0644
@@ -44,5 +44,5 @@
   notify: systemctl --system daemon-reload
   become: true
   ansible.builtin.file:
-    path: "/etc/systemd/system/systemd-nspawn@{{ item.name }}.service.d/ansible_override.conf"
+    path: "/etc/systemd/system/systemd-nspawn@{{ item.name }}.service.d/ansible_overrides.conf"
     state: absent
