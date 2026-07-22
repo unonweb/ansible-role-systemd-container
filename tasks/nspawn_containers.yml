@@ -1,0 +1,48 @@
+---
+# reset /etc/systemd/nspawn
+- when: systemd_container_nspawn_containers_reset == true  
+  name: Remove /etc/systemd/nspawn
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/nspawn
+    state: absent
+
+# mkdir /etc/systemd/nspawn
+- name: Mkdir /etc/systemd/nspawn
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/nspawn
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
+# assert
+- name: Check vars for systemd_container_nspawn_containers
+  loop: "{{ systemd_container_nspawn_containers }}"
+  ansible.builtin.assert:
+    that:
+    - item.name != None
+
+# template nspawn
+- name: Template systemd-nspawn config files
+  loop: "{{ systemd_container_nspawn_containers }}"
+  when: item.state | default('present') == 'present'
+  notify: systemctl --system daemon-reload
+  become: true
+  ansible.builtin.template:
+    src: template.nspawn.j2
+    dest: "/etc/systemd/nspawn/{{ item.name }}.nspawn"
+    owner: root
+    group: root
+    mode: 0644
+
+# remove nspawn files
+- name: Remove systemd-nspawn config files marked absent
+  loop: "{{ systemd_container_nspawn_containers }}"
+  when: item.state | default('present') == 'absent'
+  notify: systemctl --system daemon-reload
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/nspawn/{{ item.name }}.nspawn"
+    state: absent

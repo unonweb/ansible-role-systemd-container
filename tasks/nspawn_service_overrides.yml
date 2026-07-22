@@ -1,0 +1,44 @@
+---
+# assert
+- name: Check vars for vorta role
+  loop: "{{ systemd_container_nspawn_containers }}"
+  ansible.builtin.assert:
+    that:
+    - item.name != None
+    
+# mkdir overrides
+- name: Mkdir in /etc/systemd/system/...
+  become: true
+  loop: "{{ systemd_container_nspawn_containers }}"
+  when: 
+  - item.service_overrides is defined
+  - item.service_overrides != None
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item.name }}.d"
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx
+
+# template service
+- name: Template systemd-nspawn config files
+  loop: "{{ systemd_container_nspawn_containers }}"
+  when: item.state | default('present') == 'present'
+  notify: systemctl --system daemon-reload
+  become: true
+  ansible.builtin.template:
+    src: service_overrides.conf.j2
+    dest: "/etc/systemd/system/{{ item.name }}.d/override.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+# remove service files
+- name: Remove systemd-nspawn service file marked absent
+  loop: "{{ systemd_container_nspawn_containers }}"
+  when: item.state | default('present') == 'absent'
+  notify: systemctl --system daemon-reload
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item.name }}.d/override.conf"
+    state: absent

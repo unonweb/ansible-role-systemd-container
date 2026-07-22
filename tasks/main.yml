@@ -4,38 +4,27 @@
     - systemd-container
   block:
 
+  # install
   - ansible.builtin.import_tasks: install_apt.yml
 
   # mkdir /var/lib/machines
-  - name: Mkdir /var/lib/machines (set correct perms)
+  - name: Mkdir /var/lib/machines
     become: true
     ansible.builtin.file:
       path: /var/lib/machines
       mode: u=rwx,g=,o=
 
-  # reset /etc/systemd/nspawn
-  - when: systemd_container_nspawn_config_reset == true  
-    name: Remove /etc/systemd/nspawn
+  # start/enable service
+  - name: Start/Enable systemd-machined.service
     become: true
-    ansible.builtin.file:
-      path: /etc/systemd/nspawn
-      state: absent
+    ansible.builtin.systemd_service:
+      scope: system
+      name: systemd-machined.service
+      enabled: true
+      state: started
+ 
+  # nspawn_containers
+  - ansible.builtin.import_tasks: nspawn_containers.yml
 
-  # mkdir /etc/systemd/nspawn
-  - name: Mkdir /etc/systemd/nspawn
-    become: true
-    ansible.builtin.file:
-      path: /etc/systemd/nspawn
-      state: directory
-      owner: root
-      group: root
-      mode: u=rwx,g=rx,o=rx
-
-  # copy
-  - ansible.builtin.import_tasks: nspawn_copy.yml
-  
-  # sync
-  - ansible.builtin.import_tasks: nspawn_sync.yml
-  
-  # template
-  - ansible.builtin.import_tasks: nspawn_template.yml
+  # nspawn_service_overrides
+  - ansible.builtin.import_tasks: nspawn_service_overrides.yml
