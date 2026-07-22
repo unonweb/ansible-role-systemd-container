@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+# systemd-nspawn configuration for {{ item.name }}
+
+{% for section_name, section_vars in item.service_overrides.items() %}
+[{{ section_name }}]
+{% for key, value in section_vars.items() %}
+{% if value is iterable and value is not string and value is not mapping %}
+{% for sub_item in value %}
+{{ key }}={{ sub_item }}
+{% endfor %}
+{% else %}
+{{ key }}={{ value }}
+{% endif %}
+{% endfor %}
+
+{% endfor %}
