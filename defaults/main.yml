@@ -11,3 +11,7 @@ systemd_container_nspawn_containers:
 #   state: present
 #   config:
 #   service_overrides:
+
+# HANDLERS
+# ========
+systemd_container_daemon_reload: true
