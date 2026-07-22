@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-# systemd-nspawn configuration for {{ item.name }}
+# overrides for systemd-nspawn@{{ item.name }}.service
 
 {% for section_name, section_vars in item.service_overrides.items() %}
 [{{ section_name }}]
