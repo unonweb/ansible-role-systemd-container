@@ -8,6 +8,8 @@
 {% for sub_item in value %}
 {{ key }}={{ sub_item }}
 {% endfor %}
+{% elif value is boolean %}
+{{ key }}={{ 'yes' if value else 'no' }}
 {% else %}
 {{ key }}={{ value }}
 {% endif %}
