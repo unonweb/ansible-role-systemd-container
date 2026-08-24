@@ -2,6 +2,7 @@
 - name: systemd-container role
   tags:
     - systemd-container
+    - systemd-nspawn
   block:
 
   # install
