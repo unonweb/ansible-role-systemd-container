@@ -2,6 +2,7 @@
 # systemd-nspawn configuration for {{ item.name }}
 
 {% for section_name, section_vars in item.config.items() %}
+
 [{{ section_name }}]
 {% for key, value in section_vars.items() %}
 {% if value is iterable and value is not string and value is not mapping %}
@@ -14,5 +15,4 @@
 {{ key }}={{ value }}
 {% endif %}
 {% endfor %}
-
 {% endfor %}
