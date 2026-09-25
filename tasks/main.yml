@@ -1,31 +1,13 @@
 ---
 - name: systemd-container role
-  tags:
-    - systemd-container
-    - systemd-nspawn
+  tags: [role-systemd-container, role-systemd-nspawn]
   block:
 
   # install
-  - ansible.builtin.import_tasks: install_apt.yml
-
-  # mkdir /var/lib/machines
-  - name: Mkdir /var/lib/machines
-    become: true
-    ansible.builtin.file:
-      path: /var/lib/machines
-      mode: u=rwx,g=,o=
-
-  # start/enable service
-  - name: Start/Enable systemd-machined.service
-    become: true
-    ansible.builtin.systemd_service:
-      scope: system
-      name: systemd-machined.service
-      enabled: true
-      state: started
+  - ansible.builtin.import_tasks: systemd-container-install.yml
  
-  # nspawn_containers
-  - ansible.builtin.import_tasks: nspawn_containers.yml
+  # nspawn containers
+  - ansible.builtin.import_tasks: systemd-nspawn-containers.yml
 
   # nspawn_service_overrides
-  - ansible.builtin.import_tasks: nspawn_service_overrides.yml
+  - ansible.builtin.import_tasks: systemd-nspawn-service-overrides.yml
