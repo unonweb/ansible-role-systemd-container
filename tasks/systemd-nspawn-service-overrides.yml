@@ -1,10 +1,12 @@
 ---
 # assert
-- name: Check vars in systemd_container_nspawn_containers
+- name: Assertions for systemd_container_nspawn_containers
   loop: "{{ systemd_container_nspawn_containers }}"
   ansible.builtin.assert:
     that:
     - item.name != None
+    success_msg: "OK"
+    quiet: true
     
 # mkdir overrides
 - name: Mkdir in /etc/systemd/system/...

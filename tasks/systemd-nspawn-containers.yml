@@ -18,15 +18,19 @@
     mode: u=rwx,g=rx,o=rx
 
 # assert
-- name: Check vars for systemd_container_nspawn_containers
+- name: Assertions for systemd_container_nspawn_containers
   loop: "{{ systemd_container_nspawn_containers }}"
   ansible.builtin.assert:
     that:
     - item.name != None
+    success_msg: "OK"
+    quiet: true
 
 # template nspawn
-- name: Template systemd-nspawn config files
+- name: Template nspawn config files
   loop: "{{ systemd_container_nspawn_containers }}"
+  loop_control:
+    label: "/etc/systemd/nspawn/{{ item.name }}.nspawn" 
   when: item.state | default('present') == 'present'
   notify: systemctl --system daemon-reload
   become: true
